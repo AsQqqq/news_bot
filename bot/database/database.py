@@ -38,3 +38,36 @@ class control_user_table:
     def add_user(self, user_id):
         request = "INSERT INTO users (user_id) VALUES (%s)"
         crs_user.execute(request, (user_id,))
+    
+    def exists_user_sub(self, sub, user_id):
+        if sub == "videogames":
+            request = "SELECT videogames FROM users WHERE user_id = %s"
+        elif sub == "livegames":
+            request = "SELECT livegames FROM users WHERE user_id = %s"
+        elif sub == "bot":
+            request = "SELECT bot FROM users WHERE user_id = %s"
+        elif sub == "world":
+            request = "SELECT world FROM users WHERE user_id = %s"
+        else:
+            print(f"ERROR: not found {sub}")
+        crs_user.execute(request, (user_id,))
+        result = crs_user.fetchone()
+        for ret in result:
+            bool_ret = ret
+        if bool_ret == True:
+            return True
+        else:
+            return False
+    
+    async def add_user_sub(self, sub, bool_sub, user_id):
+        if sub == "videogames":
+            request = "UPDATE users SET videogames = %s WHERE user_id = %s"
+        elif sub == "livegames":
+            request = "UPDATE users SET livegames = %s WHERE user_id = %s"
+        elif sub == "bot":
+            request = "UPDATE users SET bot = %s WHERE user_id = %s"
+        elif sub == "world":
+            request = "UPDATE users SET world = %s WHERE user_id = %s"
+        else:
+            print(f"ERROR: not found {sub}")
+        crs_user.execute(request, (bool_sub, user_id,))
