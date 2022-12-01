@@ -1,6 +1,29 @@
 
 # Hi! I'm Danila 👋
 
+### Bot version 0.0.5
+## Tasks
+
+- Make a reaction to the user ✔
+- Make buttons and reactions to them ✔
+- Make a database ✔
+- Make tables and add a user to them ✔
+- Make a subscription function with a database ✔
+- Make admin buttons ❌
+- To send out advertisements \ appeals to users from the administration ❌
+- Make deletions and a message control system ❌
+- Make parsing of news sites in the terminal ❌
+- Make a newsletter by subscription ❌
+- Make a system of user requests to the administration ❌
+- Make access to the language change in the bot ❌
+- Make settings for the assistant's gender and name ❌
+- Make news timing to the user ❌ 
+- Make access to view the news history ❌
+- Make a paid subscription to the bot ❌
+
+### The list will be extended!
+
+---
 
 ## What's it?
 
