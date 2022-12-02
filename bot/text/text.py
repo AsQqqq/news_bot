@@ -44,3 +44,13 @@ else:
 
 subscribe = "Подписаться"
 cancel = "Отмена"
+
+back = "Назад"
+
+create_ads = "Сделать рассылку"
+create_warning = "Обьявить новость"
+create_update = "Обьявить об обновлении"
+other_admins_button = "Другая клавиатура"
+
+open_other_keyboard = "Другая клавиатура открыта!"
+back_open_kbd = "Вы вернулись назад"
