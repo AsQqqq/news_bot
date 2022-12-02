@@ -9,7 +9,7 @@
 - Make a database ✔
 - Make tables and add a user to them ✔
 - Make a subscription function with a database ✔
-- Make admin buttons ❌
+- Make admin buttons ✔
 - Make send out advertisements \ appeals to users from the administration ❌
 - Make deletions and a message control system ❌
 - Make parsing of news sites in the terminal ❌
