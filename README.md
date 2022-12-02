@@ -10,7 +10,7 @@
 - Make tables and add a user to them ✔
 - Make a subscription function with a database ✔
 - Make admin buttons ❌
-- To send out advertisements \ appeals to users from the administration ❌
+- Make send out advertisements \ appeals to users from the administration ❌
 - Make deletions and a message control system ❌
 - Make parsing of news sites in the terminal ❌
 - Make a newsletter by subscription ❌
