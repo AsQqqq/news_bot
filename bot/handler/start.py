@@ -14,7 +14,9 @@ from keyboard import (
     sports_subscription,
     videogame_subscription,
     bot_subscription,
-    world_subscription
+    world_subscription,
+    manu_keyboard_admins,
+    user_keyboard_admins
 )
 
 async def start_bot(message: types.Message):
@@ -25,9 +27,9 @@ async def start_bot(message: types.Message):
     if ADMIN != user_id:
         await message.answer(text.start_bot_text_user, reply_markup=manu_keyboard)
     elif ADMIN == user_id:
-        await message.answer(text.start_bot_text_admin)
-    else:
-        print("ERROR: 'start_bot' not user_id")
+        await message.answer(text.start_bot_text_admin, reply_markup=manu_keyboard_admins)
+
+
 
 async def choose_news_sub(message: types.Message):
     await message.answer(text.choose_news_subscription_text, reply_markup=sub_news_keyboard)
@@ -98,9 +100,21 @@ async def help_command_inline(call: types.CallbackQuery):
         await call.message.answer(text=text.unsubscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, False, user_id)
 
+async def other_keyboard(message: types.Message):
+    user_id = message.from_user.id
+    if ADMIN == user_id:
+        await message.answer(text.open_other_keyboard, reply_markup=user_keyboard_admins)
+
+async def back_main_keyboard(message: types.Message):
+    user_id = message.from_user.id
+    if ADMIN == user_id:
+        await message.answer(text.back_open_kbd, reply_markup=manu_keyboard_admins)
+
 def reg_handler(dp):
     dp.register_message_handler(start_bot, commands="start")
     dp.register_message_handler(choose_news_sub, text="Выбрать новостную подписку")
+    dp.register_message_handler(other_keyboard, text="Другая клавиатура")
+    dp.register_message_handler(back_main_keyboard, text="Назад")
     dp.register_message_handler(live_game, text="Спорт")
     dp.register_message_handler(video_game, text="Видеоигры")
     dp.register_message_handler(bot_news, text="Бот")
