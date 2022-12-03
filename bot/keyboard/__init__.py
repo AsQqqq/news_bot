@@ -3,7 +3,8 @@ from keyboard.menu import(
     sub_news_keyboard,
     manu_keyboard_admins,
     manu_keyboard_admins,
-    user_keyboard_admins
+    user_keyboard_admins,
+    keyboard_for_exiting_the_state_machine
 )
 
 from keyboard.subscription import(

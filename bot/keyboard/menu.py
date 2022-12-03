@@ -83,3 +83,10 @@ sub_news_keyboard = ReplyKeyboardMarkup(resize_keyboard = True)\
         text=text.world_news_button
         )
     )
+
+keyboard_for_exiting_the_state_machine = ReplyKeyboardMarkup(resize_keyboard = True)\
+    .add(
+    KeyboardButton(
+        text=text.kfetsm
+        )
+    )
