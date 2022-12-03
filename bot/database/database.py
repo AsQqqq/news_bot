@@ -59,6 +59,21 @@ class control_user_table:
         else:
             return False
     
+    def select_status(self, user_id):
+        request = "SELECT status FROM users WHERE user_id = %s"
+        crs_user.execute(request, (user_id,))
+        result = crs_user.fetchone()
+        for ret in result:
+            bool_ret = ret
+        if bool_ret == True:
+            return True
+        else:
+            return False
+    
+    async def update_status(self, user_id, status):
+        request = "UPDATE users SET status = %s WHERE user_id = %s"
+        crs_user.execute(request, (status, user_id,))
+
     async def add_user_sub(self, sub, bool_sub, user_id):
         if sub == "videogames":
             request = "UPDATE users SET videogames = %s WHERE user_id = %s"
@@ -71,3 +86,15 @@ class control_user_table:
         else:
             print(f"ERROR: not found {sub}")
         crs_user.execute(request, (bool_sub, user_id,))
+    
+    async def select_user_and_true_status(self):
+        request = "SELECT user_id FROM users WHERE status = True"
+        crs_user.execute(request)
+        result = crs_user.fetchall()
+        return result
+    
+    async def select_user_and_true_status_and_sub_to_news_bot(self):
+        request = "SELECT user_id FROM users WHERE status = True AND bot = True"
+        crs_user.execute(request)
+        result = crs_user.fetchall()
+        return result
