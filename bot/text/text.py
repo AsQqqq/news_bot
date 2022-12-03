@@ -54,3 +54,17 @@ other_admins_button = "Другая клавиатура"
 
 open_other_keyboard = "Другая клавиатура открыта!"
 back_open_kbd = "Вы вернулись назад"
+
+#keyboard for exiting the state machine 
+kfetsm = "Отменить!"
+
+edit_mailing_list_name = "Изменить имя"
+edit_mailing_list_description = "Изменить описание"
+edit_mailing_list_sub = "Изменить подпись"
+delete_mailing_list = "Удалить"
+send_mailing_list = "Отправить"
+
+delete_mailing_list_text = "Запись была удалена"
+edit_mailing_list_name_text = "Напиши новое название"
+edit_mailing_list_description_text = "Напиши новое описание"
+edit_mailing_list_sub_text = "Напиши новую подпись"
