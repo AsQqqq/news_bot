@@ -68,3 +68,20 @@ delete_mailing_list_text = "Запись была удалена"
 edit_mailing_list_name_text = "Напиши новое название"
 edit_mailing_list_description_text = "Напиши новое описание"
 edit_mailing_list_sub_text = "Напиши новую подпись"
+
+error_message = "Я не понимаю твои слова. Напиши /start или /help"
+
+#message_everyone_text_state
+message_everyone_text_state_add = "💻Напиши название рассылки"
+message_everyone_text_state_name = "📓Напиши текст рассылки"
+message_everyone_text_state_photo = "📝Приложи фото"
+message_everyone_text_state_sub = "💜Укажите подпись создателя"
+message_everyone_text_state_send = "☑️рассылка отправлена"
+
+
+
+#message_news_text_state
+message_news_text_state_add = "💻Напиши название новости"
+message_news_text_state_name = "📓Напиши текст новости"
+message_news_text_state_sub = "💜Укажите подпись создателя"
+message_news_text_state_send = "☑️рассылка отправлена"
