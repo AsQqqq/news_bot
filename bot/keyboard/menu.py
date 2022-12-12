@@ -82,6 +82,11 @@ sub_news_keyboard = ReplyKeyboardMarkup(resize_keyboard = True)\
     KeyboardButton(
         text=text.world_news_button
         )
+    )\
+    .add(
+    KeyboardButton(
+            text=text.keyboard_button_edit_back
+    )
     )
 
 keyboard_for_exiting_the_state_machine = ReplyKeyboardMarkup(resize_keyboard = True)\
@@ -89,4 +94,27 @@ keyboard_for_exiting_the_state_machine = ReplyKeyboardMarkup(resize_keyboard = T
     KeyboardButton(
         text=text.kfetsm
         )
+    )
+
+
+keyboard_edit_bots = ReplyKeyboardMarkup(resize_keyboard=True)\
+    .add(
+    KeyboardButton(
+            text=text.keyboard_button_edit_storyteller
+            )
+    )\
+    .add(
+    KeyboardButton(
+            text=text.keyboard_button_edit_cell1
+            )
+    )\
+    .add(
+    KeyboardButton(
+            text=text.keyboard_button_edit_cell2
+            )
+    )\
+    .add(
+    KeyboardButton(
+            text=text.keyboard_button_edit_back
+            )
     )
