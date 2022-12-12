@@ -24,5 +24,5 @@ storage = MemoryStorage()
 scheduler = AsyncIOScheduler()
 scheduler.start()
 
-bot = Bot(token=config.TOKEN, parse_mode=types.ParseMode.HTML)
+bot = Bot(token=config.TOKEN, parse_mode=types.ParseMode.MARKDOWN)
 dp = Dispatcher(bot, storage=storage)
