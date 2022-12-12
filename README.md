@@ -66,3 +66,29 @@ APScheduler, a library for creating tasks
 ## Running
 
 To launch the bot, you need to install all the libraries and either create a virtual environment in the root folder or remove it in the start_bot file.bat
+
+## Config.py
+
+in this file there are variables such as:
+
+- Admin part
+  - ADMINS - here you need to insert the administrator's ID in quotes
+- Bot part
+  - TOKEN - here you need to insert the bot token in quotes
+- PostgreSQL part
+  - HOST - Database HOST
+  - USER - Database user
+  - PASSWORD - Database password
+  - DB_NAME - Database name
+- Message part
+  - safi_emotion - Token sticker
+  - safi_rejoices - Token sticker
+  - safi_sad - Token sticker
+  - safi_smiling - Token sticker
+  - safi_no_mood - Token sticker
+  - gerald_emotion - Token sticker
+  - gerald_rejoices - Token sticker
+  - gerald_angry - Token sticker
+  - gerald_smiling - Token sticker
+
+### create a config file.py is needed in the start_bot folder

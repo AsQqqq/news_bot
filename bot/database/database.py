@@ -24,7 +24,8 @@ def table_create_user():
                 videogames bool NOT NULL DEFAULT (FALSE),
                 livegames bool NOT NULL DEFAULT (FALSE),
                 bot bool NOT NULL DEFAULT (FALSE),
-                world bool NOT NULL DEFAULT (FALSE));"""
+                world bool NOT NULL DEFAULT (FALSE),
+                storyteller_user TEXT);"""
         )
 
 #CONTROL
@@ -98,3 +99,21 @@ class control_user_table:
         crs_user.execute(request)
         result = crs_user.fetchall()
         return result
+
+    def select_storyteller_user(self, user_id):
+        request = "SELECT storyteller_user FROM users WHERE user_id = %s"
+        crs_user.execute(request, (user_id,))
+        result = crs_user.fetchone()
+        for ret in result:
+            if ret == "NotFound":
+                return "NotFound"
+            elif ret == "Safi":
+                return "Safi"
+            elif ret == "Gerald":
+                return "Gerald"
+            else:
+                print(f"ERROR: not found {ret}")
+
+    def update_storyteller_user(self, user_id, storyteller_user):
+        request = "UPDATE users SET storyteller_user = %s WHERE user_id = %s"
+        crs_user.execute(request, (storyteller_user, user_id,))
