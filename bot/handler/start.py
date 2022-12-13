@@ -28,19 +28,27 @@ from keyboard import (
     bot_subscription_not,
     world_subscription_not,
 )
+import asyncio
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.filters import Text
 from handler.message_delete import message_delete
 
+id_message_list = []
+
 async def start_bot(message: types.Message):
+    global message_storyteller_exists, msg_start_stick, msg_start
+    user_id = message.from_user.id
     try:
         await message.delete()
     except:
         pass
-    user_id = message.from_user.id
-    global message_storyteller_exists, msg_start_stick, msg_start
+    try:
+        await bot.delete_message(user_id, msg_start_stick.message_id)
+        await bot.delete_message(user_id, msg_start.message_id)
+    except:
+        pass
     if not CONTROL_TABLE.user_exists(user_id):  
         CONTROL_TABLE.add_user(user_id)
         storyteller_user = "NotFound"
@@ -50,7 +58,12 @@ async def start_bot(message: types.Message):
             await CONTROL_TABLE.update_status(user_id, True)
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     if storyteller == "NotFound":
+        try:
+            await bot.delete_message(user_id, message_storyteller_exists.message_id)
+        except:
+            pass
         message_storyteller_exists = await message.answer(text=text.select_message_personality, reply_markup=edit_storyteller)
+        id_message_list.append(message_storyteller_exists.message_id)
     elif storyteller == "Safi":
         text_user = text.text_start_bot_text_user(storyteller)
         if ADMIN != user_id:
@@ -75,7 +88,52 @@ async def start_bot(message: types.Message):
                 msg_start = await bot.send_message(message.from_user.id, text.start_bot_text_admin, reply_markup=manu_keyboard_admins)
     else:
         print("ERROR: message in /start")
+    try:
+        id_message_list.append(msg_start.message_id)
+        id_message_list.append(msg_start_stick.message_id)
+    except:
+        print("ERROR: error append msg_start in list")
 
+async def test_project(message: types.Message):
+    user_id = message.from_user.id
+    if ADMIN == user_id:
+        #global id_message_list
+        await message.delete()
+        import os
+        os.system("cls")
+        print(id_message_list)
+        for id in id_message_list:
+            print(id)
+            try:
+                #await asyncio.sleep(0.5)
+                try:
+                    await bot.delete_message(user_id, id)
+                except:
+                    await bot.delete_message(user_id, id)
+                print(f"DELETE: {id}")
+                #id_message_list.remove(id)
+            except:
+                id_test_list = [id]
+                print(f"ERROR: could not delete message {id}")
+        id_message_list.clear()
+        try:
+            for row in id_test_list:
+                id_message_list.append(row)
+        except:
+            print(f"ERROR: could not append in the id_message_list {id}")
+
+async def check_list(message: types.Message):
+    user_id = message.from_user.id
+    if ADMIN == user_id:
+        await message.delete()
+        import os
+        os.system('cls')
+        print(id_message_list)
+        for id in id_message_list:
+            try:
+                print(id)
+            except:
+                print("ERROR: could not id")
 
 async def back_for_menu(message: types.Message):
     await message.delete()
@@ -84,68 +142,168 @@ async def back_for_menu(message: types.Message):
     text_user = text.message_back_from_user_menu
     if storyteller != "NotFound":    
         if user_id == ADMIN:
-            await message.answer(text_user ,reply_markup=user_keyboard_admins)
+            msg = await message.answer(text_user ,reply_markup=user_keyboard_admins)
         else:
-            await message.answer(text_user ,reply_markup=manu_keyboard)
+            msg = await message.answer(text_user ,reply_markup=manu_keyboard)
     else:
         await message.answer(text=text.message_error_storyteller)
+    try:
+        await choose_news_sub_message.delete()
+    except:
+        pass
+    try:
+        await choose_sub_message.delete()
+    except:
+        pass
+    try:
+        await msg_subs_user.delete()
+    except:
+        pass
+    try:
+        await msg_edit_bot.delete()
+    except:
+        pass
+    await asyncio.sleep(50)
+    try:
+        await msg.delete()
+    except Exception as e:
+        pass
 
 @dp.callback_query_handler(text="storyteller_safi")
 async def edit_name(call: types.CallbackQuery):
     await call.answer()
-    global storyteller
     user_id = call.from_user.id
+    try:
+        await bot.delete_message(user_id, message_storyteller_exists.message_id)
+    except:
+        pass
+    global storyteller
     storyteller_user = "Safi"
     CONTROL_TABLE.update_storyteller_user(user_id, storyteller_user)
-    date_5 = datetime.now() + timedelta(seconds=5)
     message_safi = await call.message.answer("Выбрана Safi")
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     text_user = text.text_start_bot_text_user(storyteller)
     if ADMIN != user_id:
-        await bot.send_sticker(call.from_user.id, SAFI_REJOICES)
-        await call.message.answer(text_user, reply_markup=manu_keyboard)
+        msg_start_stick = await bot.send_sticker(call.from_user.id, SAFI_REJOICES)
+        msg_start = await call.message.answer(text_user, reply_markup=manu_keyboard)
     elif ADMIN == user_id:
-        await bot.send_sticker(call.from_user.id, SAFI_REJOICES)
-        await call.message.answer(text.start_bot_text_admin, reply_markup=manu_keyboard_admins)
+        msg_start_stick = await bot.send_sticker(call.from_user.id, SAFI_REJOICES)
+        msg_start = await call.message.answer(text.start_bot_text_admin, reply_markup=manu_keyboard_admins)
+    try:
+        id_message_list.append(msg_start.message_id)
+        id_message_list.append(msg_start_stick.message_id)
+    except:
+        print("ERROR: error append msg_start in list")
+    try:
+        await msg_edit_bot.delete()
+    except:
+        pass
+    try:
+        await asyncio.sleep(20)
+        await message_safi.delete()
+    except Exception as e:
+        print("ERROR: Exception error while deleting")
+
 
 @dp.callback_query_handler(text="storyteller_gerald")
 async def edit_name(call: types.CallbackQuery):
     await call.answer()
-    global storyteller
     user_id = call.from_user.id
+    try:
+        await bot.delete_message(user_id, message_storyteller_exists.message_id)
+    except:
+        pass
+    global storyteller
     storyteller_user = "Gerald"
     CONTROL_TABLE.update_storyteller_user(user_id, storyteller_user)
-    date_5 = datetime.now() + timedelta(seconds=5)
     message_gerald = await call.message.answer("Выбран Gerald")
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     text_user = text.text_start_bot_text_user(storyteller)
     if ADMIN != user_id:
-        await bot.send_sticker(call.from_user.id, GERALD_REJOICES)
-        await call.message.answer(text_user, reply_markup=manu_keyboard)
+        msg_start_stick = await bot.send_sticker(call.from_user.id, GERALD_REJOICES)
+        msg_start = await call.message.answer(text_user, reply_markup=manu_keyboard)
     elif ADMIN == user_id:
-        await bot.send_sticker(call.from_user.id, GERALD_REJOICES)
-        await call.message.answer(text.start_bot_text_admin, reply_markup=manu_keyboard_admins)
+        msg_start_stick = await bot.send_sticker(call.from_user.id, GERALD_REJOICES)
+        msg_start = await call.message.answer(text.start_bot_text_admin, reply_markup=manu_keyboard_admins)
+    try:
+        id_message_list.append(msg_start.message_id)
+        id_message_list.append(msg_start_stick.message_id)
+    except:
+        print("ERROR: error append msg_start in list")
+    try:
+        await msg_edit_bot.delete()
+    except:
+        pass
+    try:
+        await asyncio.sleep(20)
+        await message_gerald.delete()
+    except Exception as e:
+        print("ERROR: Exception error while deleting")
 
 async def edit_bots(message: types.Message):
+    global msg_edit_bot
     await message.delete()
     user_id = message.from_user.id
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     text_user = text.text_edit_bot_text(storyteller)
     if storyteller != "NotFound":    
-        await message.answer(text_user ,reply_markup=keyboard_edit_bots)
+        msg_edit_bot = await bot.send_message(user_id, text_user ,reply_markup=keyboard_edit_bots)
     else:
         await message.answer(text=text.message_error_storyteller)
+    try:
+        await bot.delete_message(user_id, msg_start_stick.message_id)
+        await bot.delete_message(user_id, msg_start.message_id)
+    except:
+        pass
 
 async def edit_storyteller_for_bot(message: types.Message):
-    await message.delete()
     global message_storyteller_exists
     user_id = message.from_user.id
+    
+
+    for id in id_message_list:
+        try:
+            try:
+                await bot.delete_message(user_id, id)
+            except:
+                await bot.delete_message(user_id, id)
+        except:
+            id_test_list = [id]
+
+    id_message_list.clear()
+    
+    try:
+        for row in id_test_list:
+            id_message_list.append(row)
+    except:
+        print(f"ERROR: could not append in the id_message_list {id}")
+    
+    
+    await message.delete()
+    try:
+        await bot.delete_message(user_id, message_storyteller_exists.message_id)
+    except:
+        pass
+    try:
+        await bot.delete_message(user_id, msg_start_stick.message_id)
+        await bot.delete_message(user_id, msg_start.message_id)
+    except:
+        pass
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     text_user = text.select_message_personality
     if storyteller != "NotFound":    
         message_storyteller_exists = await message.answer(text_user ,reply_markup=edit_storyteller)
     else:
         await message.answer(text=text.message_error_storyteller)
+    try:
+        await msg_edit_bot.delete()
+    except:
+        pass
+    await asyncio.sleep(100)
+    try:
+        await message_storyteller_exists.delete()
+    except Exception as e:
+        pass
 
 
 #everyone, news
@@ -479,9 +637,14 @@ async def help_command_inline(message: types.Message):
     msg = await bot.send_message(user_id, text=message_text, reply_markup=sub_news_keyboard)
 
 async def choose_news_sub(message: types.Message):
+    user_id = message.from_user.id
+    try:
+        await bot.delete_message(user_id, msg_start_stick.message_id)
+        await bot.delete_message(user_id, msg_start.message_id)
+    except:
+        pass
     global choose_news_sub_message
     await message.delete()
-    user_id = message.from_user.id
     subs = ("videogames", "livegames", "bot", "world")
     for row in subs:
         bool_sub = str(row) + " " + str(CONTROL_TABLE.exists_user_sub(row, user_id))
@@ -525,6 +688,11 @@ async def choose_news_sub(message: types.Message):
     if sub_videogames == False and sub_livegames == False and sub_bot == False and sub_world == False:
         if storyteller != "NotFound":
             choose_news_sub_message = await message.answer(text.choose_news_subscription_text, reply_markup=sub_news_keyboard)
+            await asyncio.sleep(300)
+            try:
+                await choose_news_sub_message.delete()
+            except Exception as e:
+                pass
         else:
             await message.answer(text=text.message_error_storyteller)
     elif sub_videogames == True and sub_livegames == True and sub_bot == True and sub_world == True:
@@ -532,6 +700,11 @@ async def choose_news_sub(message: types.Message):
         text_news_ = text.choose_news_variant(subs_list, level, storyteller)
         if storyteller != "NotFound":
             choose_news_sub_message = await message.answer(text=text_news_, reply_markup=sub_news_keyboard)
+            await asyncio.sleep(300)
+            try:
+                await choose_news_sub_message.delete()
+            except Exception as e:
+                pass
         else:
             await message.answer(text=text.message_error_storyteller)
     else:
@@ -539,6 +712,11 @@ async def choose_news_sub(message: types.Message):
         text_news_ = text.choose_news_variant(subs_list, level, storyteller)
         if storyteller != "NotFound":
             choose_news_sub_message = await bot.send_message(user_id, text=text_news_, reply_markup=sub_news_keyboard)
+            await asyncio.sleep(300)
+            try:
+                await choose_news_sub_message.delete()
+            except Exception as e:
+                pass
         else:
             await message.answer(text=text.message_error_storyteller)
 
@@ -546,13 +724,11 @@ async def live_game(message: types.Message):
     global choose_sub_message
     await message.delete()
     user_id = message.from_user.id
-
     try:
         choose_sub_message_id = choose_sub_message.message_id
         await bot.delete_message(user_id, choose_sub_message_id)
     except:
         pass
-
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     sub = "livegames"
     if CONTROL_TABLE.exists_user_sub(sub, user_id) == True:
@@ -565,18 +741,21 @@ async def live_game(message: types.Message):
             choose_sub_message = await message.answer(text.live_game_text, reply_markup=sports_subscription)
         else:
             await message.answer(text=text.message_error_storyteller)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, choose_sub_message.message_id)
+    except Exception as e:
+        pass
 
 async def video_game(message: types.Message):
     global choose_sub_message
     await message.delete()
     user_id = message.from_user.id
-
     try:
         choose_sub_message_id = choose_sub_message.message_id
         await bot.delete_message(user_id, choose_sub_message_id)
     except:
         pass
-
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     text_user = text.text_video_game_text(storyteller)
     sub = "videogames"
@@ -590,19 +769,22 @@ async def video_game(message: types.Message):
             choose_sub_message = await message.answer(text=text_user, reply_markup=videogame_subscription)
         else:
             await message.answer(text=text.message_error_storyteller)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, choose_sub_message.message_id)
+    except Exception as e:
+        pass
 
 
 async def bot_news(message: types.Message):
     global choose_sub_message
     await message.delete()
     user_id = message.from_user.id
-
     try:
         choose_sub_message_id = choose_sub_message.message_id
         await bot.delete_message(user_id, choose_sub_message_id)
     except:
         pass
-
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     sub = "bot"
     if CONTROL_TABLE.exists_user_sub(sub, user_id) == False:
@@ -615,18 +797,21 @@ async def bot_news(message: types.Message):
             choose_sub_message = await message.answer(text.bot_news_text, reply_markup=bot_subscription_not)
         else:
             await message.answer(text=text.message_error_storyteller)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, choose_sub_message.message_id)
+    except Exception as e:
+        pass
 
 async def world_new(message: types.Message):
     global choose_sub_message
     await message.delete()
     user_id = message.from_user.id
-
     try:
         choose_sub_message_id = choose_sub_message.message_id
         await bot.delete_message(user_id, choose_sub_message_id)
     except:
         pass
-
     sub = "world"
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
 
@@ -640,10 +825,16 @@ async def world_new(message: types.Message):
             choose_sub_message = await message.answer(text.world_news_text, reply_markup=world_subscription_not)
         else:
             await message.answer(text=text.message_error_storyteller)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, choose_sub_message.message_id)
+    except Exception as e:
+        pass
 
 #SUBSCRIPTION
 @dp.callback_query_handler(text='sports_sub')
 async def help_command_inline(message: types.Message):
+    global msg_subs_user
     user_id = message.from_user.id
     try:
         choose_sub_message_id = choose_sub_message.message_id
@@ -655,15 +846,21 @@ async def help_command_inline(message: types.Message):
     unsubscribe_text = text.text_unsubscribe_text(storyteller)
     sub = "livegames"
     if CONTROL_TABLE.exists_user_sub(sub, user_id) == False:
-        await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, True, user_id)
     elif CONTROL_TABLE.exists_user_sub(sub, user_id) == True:
-        await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, False, user_id)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, msg_subs_user.message_id)
+    except Exception as e:
+        pass
 
 #SUBSCRIPTION
 @dp.callback_query_handler(text='videogame_sub')
 async def help_command_inline(message: types.Message):
+    global msg_subs_user
     user_id = message.from_user.id
     try:
         choose_sub_message_id = choose_sub_message.message_id
@@ -675,15 +872,21 @@ async def help_command_inline(message: types.Message):
     unsubscribe_text = text.text_unsubscribe_text(storyteller)
     sub = "videogames"
     if CONTROL_TABLE.exists_user_sub(sub, user_id) == False:
-        await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, True, user_id)
     elif CONTROL_TABLE.exists_user_sub(sub, user_id) == True:
-        await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, False, user_id)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, msg_subs_user.message_id)
+    except Exception as e:
+        pass
 
 #SUBSCRIPTION
 @dp.callback_query_handler(text='bot_sub')
 async def help_command_inline(message: types.Message):
+    global msg_subs_user
     user_id = message.from_user.id
     try:
         choose_sub_message_id = choose_sub_message.message_id
@@ -695,15 +898,21 @@ async def help_command_inline(message: types.Message):
     unsubscribe_text = text.text_unsubscribe_text(storyteller)
     sub = "bot"
     if CONTROL_TABLE.exists_user_sub(sub, user_id) == False:
-        await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, True, user_id)
     elif CONTROL_TABLE.exists_user_sub(sub, user_id) == True:
-        await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, False, user_id)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, msg_subs_user.message_id)
+    except Exception as e:
+        pass
 
 #SUBSCRIPTION
 @dp.callback_query_handler(text='world_sub')
 async def help_command_inline(message: types.Message):
+    global msg_subs_user
     user_id = message.from_user.id
     try:
         choose_sub_message_id = choose_sub_message.message_id
@@ -715,31 +924,56 @@ async def help_command_inline(message: types.Message):
     unsubscribe_text = text.text_unsubscribe_text(storyteller)
     sub = "world"
     if CONTROL_TABLE.exists_user_sub(sub, user_id) == False:
-        await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=subscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, True, user_id)
     elif CONTROL_TABLE.exists_user_sub(sub, user_id) == True:
-        await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
+        msg_subs_user = await bot.send_message(user_id, text=unsubscribe_text, reply_markup=sub_news_keyboard)
         await CONTROL_TABLE.add_user_sub(sub, False, user_id)
+    await asyncio.sleep(150)
+    try:
+        await bot.delete_message(user_id, msg_subs_user.message_id)
+    except Exception as e:
+        pass
 
 async def other_keyboard(message: types.Message):
     await message.delete()
+    global other_msg_id
+    try:
+        await other_msg_id.delete()
+    except Exception as e:
+        pass
     user_id = message.from_user.id
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     if storyteller != "NotFound":    
         user_id = message.from_user.id
         if ADMIN == user_id:
-            msg = await message.answer(text.open_other_keyboard, reply_markup=user_keyboard_admins)
+            other_msg_id = await message.answer(text.open_other_keyboard, reply_markup=user_keyboard_admins)
+            await asyncio.sleep(50)
+            try:
+                await other_msg_id.delete()
+            except Exception as e:
+                pass
     else:
         await message.answer(text=text.message_error_storyteller)
 
 async def back_main_keyboard(message: types.Message):
     await message.delete()
+    global main_msg_id
+    try:
+        await main_msg_id.delete()
+    except Exception as e:
+        pass
     user_id = message.from_user.id
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     if storyteller != "NotFound":
         user_id = message.from_user.id
         if ADMIN == user_id:
-            await message.answer(text.back_open_kbd, reply_markup=manu_keyboard_admins)
+            main_msg_id = await message.answer(text.back_open_kbd, reply_markup=manu_keyboard_admins)
+            await asyncio.sleep(50)
+            try:
+                await main_msg_id.delete()
+            except Exception as e:
+                pass
     else:
         await message.answer(text=text.message_error_storyteller)
 
@@ -747,7 +981,6 @@ async def not_state(message: types.Message, state: FSMContext):
     await message.delete()
     user_id = message.from_user.id
     msg_state_id = msg_state.message_id
-    await bot.delete_message(user_id, msg_state_id)
     storyteller = CONTROL_TABLE.select_storyteller_user(user_id)
     if storyteller != "NotFound":
         if user_id == ADMIN:
@@ -755,7 +988,13 @@ async def not_state(message: types.Message, state: FSMContext):
             if current_state is None:
                 return
             await state.finish()
-            await message.answer(text=text.message_delete_state, reply_markup=manu_keyboard_admins)
+            msg = await message.answer(text=text.message_delete_state, reply_markup=manu_keyboard_admins)
+            await bot.delete_message(user_id, msg_state_id)
+            await asyncio.sleep(50)
+            try:
+                await msg.delete()
+            except Exception as e:
+                pass
         else:
             await message.answer('Я не понимаю твои слова. Напиши /start или /help')
 
@@ -764,6 +1003,8 @@ async def not_state(message: types.Message, state: FSMContext):
 
 def reg_handler(dp):
     dp.register_message_handler(start_bot, commands="start")
+    dp.register_message_handler(test_project, commands="test")
+    dp.register_message_handler(check_list, commands="list")
     dp.register_message_handler(choose_news_sub, text=text.choose_news_subscription)
     dp.register_message_handler(edit_bots, text=text.bot_settings)
     dp.register_message_handler(back_for_menu, text=text.keyboard_button_edit_back)

@@ -18,6 +18,14 @@ manu_keyboard = ReplyKeyboardMarkup(resize_keyboard = True)\
         )
     )
 
+"""
+try:
+    await bot.delete_message(user_id, msg_start_stick.message_id)
+    await bot.delete_message(user_id, msg_start.message_id)
+except:
+    pass
+"""
+
 manu_keyboard_admins = ReplyKeyboardMarkup(resize_keyboard = True)\
     .add(
     KeyboardButton(
